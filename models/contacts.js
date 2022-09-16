@@ -19,7 +19,14 @@ const getContactById = async contactId => {
   return contact;
 };
 
-const removeContact = async contactId => {};
+const removeContact = async contactId => {
+  const contacts = await listContacts();
+  const contact = contacts.find(item => item.id === contactId);
+
+  if (!contact) {
+    throw new Error(`Could not find contact with id ${contact}`);
+  }
+};
 
 const addContact = async body => {};
 
