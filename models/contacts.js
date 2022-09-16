@@ -1,6 +1,8 @@
 const fs = require('fs/promises');
 const path = require('path');
 
+const nanoid = require('nanoid');
+
 const contactsPath = path.join(__dirname, 'contacts.json');
 
 const listContacts = async () => {
@@ -13,7 +15,7 @@ const getContactById = async contactId => {
   const contact = contacts.find(item => item.id === contactId);
 
   if (!contact) {
-    throw new Error('Could not find this contact');
+    throw new Error('Not found');
   }
 
   return contact;
@@ -24,7 +26,7 @@ const removeContact = async contactId => {
   const index = contacts.findIndex(item => item.id === contactId);
 
   if (index === -1) {
-    throw new Error('Could not find this contact');
+    throw new Error('Not found');
   }
 
   const removedContact = contacts.splice(index, 1);
@@ -36,6 +38,11 @@ const removeContact = async contactId => {
 
 const addContact = async body => {
   const contacts = await listContacts();
+  const newContact = { id: nanoid(), ...body };
+  const newContactsList = JSON.stringify([...contacts, newContact], null, 2);
+
+  await fs.writeFile(contactsPath, newContactsList, 'utf8');
+  return newContact;
 };
 
 const updateContact = async (contactId, body) => {};
