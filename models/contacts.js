@@ -3,7 +3,10 @@ const path = require('path');
 
 const contactsPath = path.join(__dirname, 'contacts.json');
 
-const listContacts = async () => {};
+const listContacts = async () => {
+  const contacts = await fs.readFile(contactsPath, 'utf8');
+  return JSON.parse(contacts);
+};
 
 const getContactById = async contactId => {};
 
