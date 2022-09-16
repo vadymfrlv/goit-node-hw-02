@@ -1,4 +1,5 @@
-const nanoid = require('nanoid');
+const { v4 } = require('uuid');
+
 const {
   listContacts,
   getContactById,
@@ -10,7 +11,7 @@ const {
 const listContactsCtrl = async (req, res, next) => {
   try {
     const contacts = await listContacts();
-    return res.status(200).json(contacts);
+    res.status(200).json(contacts);
   } catch (error) {
     next(error);
   }
@@ -35,7 +36,7 @@ const addContactCtrl = async (req, res, next) => {
       res.status(400).json({ message: 'missing required name field' });
       return;
     }
-    const newContact = await addContact({ id: nanoid(), ...body });
+    const newContact = await addContact({ id: v4(), ...body });
     res.status(201).json(newContact);
   } catch (error) {
     next(error);
