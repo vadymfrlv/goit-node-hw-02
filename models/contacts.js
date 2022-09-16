@@ -13,7 +13,7 @@ const getContactById = async contactId => {
   const contact = contacts.find(item => item.id === contactId);
 
   if (!contact) {
-    throw new Error(`Could not find contact with id ${contactId}`);
+    throw new Error('Could not find this contact');
   }
 
   return contact;
@@ -21,14 +21,22 @@ const getContactById = async contactId => {
 
 const removeContact = async contactId => {
   const contacts = await listContacts();
-  const contact = contacts.find(item => item.id === contactId);
+  const index = contacts.findIndex(item => item.id === contactId);
 
-  if (!contact) {
-    throw new Error(`Could not find contact with id ${contact}`);
+  if (index === -1) {
+    throw new Error('Could not find this contact');
   }
+
+  const removedContact = contacts.splice(index, 1);
+  const contactsStr = JSON.stringify(contacts, null, 2);
+
+  await fs.writeFile(contactsPath, contactsStr, 'utf8');
+  return removedContact;
 };
 
-const addContact = async body => {};
+const addContact = async body => {
+  const contacts = await listContacts();
+};
 
 const updateContact = async (contactId, body) => {};
 
