@@ -9,12 +9,13 @@ const {
   updateContactCtrl,
 } = require('../../controllers/contacts');
 
+const validation = require('../../middlewares/validation');
+const schema = require('../../schemas/contactValidationSchema');
+
 router.get('/', listContactsCtrl);
 router.get('/:contactId', getContactByIdCtrl);
-//! schema add
-router.post('/', addContactCtrl);
+router.post('/', validation(schema), addContactCtrl);
 router.delete('/:contactId', removeContactCtrl);
-//! schema add
-router.put('/:contactId', updateContactCtrl);
+router.put('/:contactId', validation(schema), updateContactCtrl);
 
 module.exports = router;

@@ -21,14 +21,12 @@ const getContactById = async contactId => {
 
 const addContact = async body => {
   const contacts = await listContacts();
-  // const newContact = { body };
-  contacts.push(body);
-  // const newContactsList = JSON.stringify([...contacts, newContact], null, 2);
-  const newContactsList = JSON.stringify(contacts, null, 2);
+  const newContact = body;
+
+  const newContactsList = JSON.stringify([...contacts, newContact], null, 2);
 
   await fs.writeFile(contactsPath, newContactsList, 'utf8');
-  // return newContact;
-  return body;
+  return newContact;
 };
 
 const removeContact = async contactId => {
@@ -54,7 +52,7 @@ const updateContact = async (contactId, body) => {
     throw new Error('Not found');
   }
 
-  const updatedContact = { contactId, ...body };
+  const updatedContact = { ...contacts[index], ...body };
   contacts[index] = updatedContact;
 
   const contactsStr = JSON.stringify(contacts, null, 2);
