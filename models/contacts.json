@@ -1,7 +1,7 @@
 [
   {
-    "contactId": "1",
-    "name": "Alle Raymond",
+    "id": "1",
+    "name": "Allen Raymond",
     "email": "nulla.ante@vestibul.co.uk",
     "phone": "(992) 914-3792"
   },
@@ -58,19 +58,5 @@
     "name": "Alec Howard",
     "email": "Donec.elementum@scelerisquescelerisquedui.net",
     "phone": "(748) 206-2688"
-  },
-  {
-    "body": {
-      "id": "bad04896-d330-4b01-bce1-f0ace2c6558a",
-      "query": "\n    query IntrospectionQuery {\n      __schema {\n        queryType { name }\n        mutationType { name }\n        subscriptionType { name }\n        types {\n          ...FullType\n        }\n        directives {\n          name\n          description\n          locations\n          args {\n            ...InputValue\n          }\n        }\n      }\n    }\n\n    fragment FullType on __Type {\n      kind\n      name\n      description\n      fields(includeDeprecated: true) {\n        name\n        description\n        args {\n          ...InputValue\n        }\n        type {\n          ...TypeRef\n        }\n        isDeprecated\n        deprecationReason\n      }\n      inputFields {\n        ...InputValue\n      }\n      interfaces {\n        ...TypeRef\n      }\n      enumValues(includeDeprecated: true) {\n        name\n        description\n        isDeprecated\n        deprecationReason\n      }\n      possibleTypes {\n        ...TypeRef\n      }\n    }\n\n    fragment InputValue on __InputValue {\n      name\n      description\n      type { ...TypeRef }\n      defaultValue\n    }\n\n    fragment TypeRef on __Type {\n      kind\n      name\n      ofType {\n        kind\n        name\n        ofType {\n          kind\n          name\n          ofType {\n            kind\n            name\n            ofType {\n              kind\n              name\n              ofType {\n                kind\n                name\n                ofType {\n                  kind\n                  name\n                  ofType {\n                    kind\n                    name\n                  }\n                }\n              }\n            }\n          }\n        }\n      }\n    }\n  "
-    }
-  },
-  {
-    "body": {
-      "id": "618f311d-9aa4-448f-94c1-3f958d1b0ea4",
-      "name": "ghfghf",
-      "email": "dui.in@egetlacus.ca",
-      "phone": "(294) 840-6685"
-    }
   }
 ]

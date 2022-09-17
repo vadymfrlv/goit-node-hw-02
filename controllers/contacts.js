@@ -1,4 +1,4 @@
-const { v4 } = require('uuid');
+const short = require('shortid');
 
 const {
   listContacts,
@@ -36,7 +36,7 @@ const addContactCtrl = async (req, res, next) => {
       res.status(400).json({ message: 'missing required name field' });
       return;
     }
-    const newContact = await addContact({ id: v4(), ...body });
+    const newContact = await addContact({ id: short(), ...body });
     res.status(201).json(newContact);
   } catch (error) {
     next(error);
