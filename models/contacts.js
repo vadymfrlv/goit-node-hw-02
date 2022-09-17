@@ -1,19 +1,70 @@
-// const fs = require('fs/promises')
+const fs = require('fs/promises');
+const path = require('path');
 
-const listContacts = async () => {}
+const contactsPath = path.join(__dirname, 'contacts.json');
 
-const getContactById = async (contactId) => {}
+const listContacts = async () => {
+  const contacts = await fs.readFile(contactsPath, 'utf8');
+  return JSON.parse(contacts);
+};
 
-const removeContact = async (contactId) => {}
+const getContactById = async contactId => {
+  const contacts = await listContacts();
+  const contact = contacts.find(item => item.id === contactId);
 
-const addContact = async (body) => {}
+  if (!contact) {
+    throw new Error('Not found');
+  }
 
-const updateContact = async (contactId, body) => {}
+  return contact;
+};
+
+const addContact = async body => {
+  const contacts = await listContacts();
+  const newContact = body;
+
+  const newContactsList = JSON.stringify([...contacts, newContact], null, 2);
+
+  await fs.writeFile(contactsPath, newContactsList, 'utf8');
+  return newContact;
+};
+
+const removeContact = async contactId => {
+  const contacts = await listContacts();
+  const index = contacts.findIndex(item => item.id === contactId);
+
+  if (index === -1) {
+    throw new Error('Not found');
+  }
+
+  const removedContact = contacts.splice(index, 1);
+  const contactsStr = JSON.stringify(contacts, null, 2);
+
+  await fs.writeFile(contactsPath, contactsStr, 'utf8');
+  return removedContact;
+};
+
+const updateContact = async (contactId, body) => {
+  const contacts = await listContacts();
+  const index = contacts.findIndex(item => item.id === contactId);
+
+  if (index === -1) {
+    throw new Error('Not found');
+  }
+
+  const updatedContact = { ...contacts[index], ...body };
+  contacts[index] = updatedContact;
+
+  const contactsStr = JSON.stringify(contacts, null, 2);
+
+  await fs.writeFile(contactsPath, contactsStr, 'utf8');
+  return updatedContact;
+};
 
 module.exports = {
   listContacts,
   getContactById,
-  removeContact,
   addContact,
+  removeContact,
   updateContact,
-}
+};
