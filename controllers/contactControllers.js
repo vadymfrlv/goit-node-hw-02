@@ -6,7 +6,7 @@ const {
   addContact,
   removeContact,
   updateContact,
-} = require('../models/contacts');
+} = require('../models/contactsModel');
 
 const listContactsCtrl = async (req, res, next) => {
   try {
