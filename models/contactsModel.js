@@ -1,70 +1,25 @@
-const fs = require('fs/promises');
-const path = require('path');
+const { Schema, model } = require('mongoose');
 
-const contactsPath = path.join(__dirname, 'contacts.json');
+const contactSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: [true, 'Set name for contact'],
+    },
+    email: {
+      type: String,
+    },
+    phone: {
+      type: String,
+    },
+    favorite: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { versionKey: false, timestamps: true }
+);
 
-const listContacts = async () => {
-  const contacts = await fs.readFile(contactsPath, 'utf8');
-  return JSON.parse(contacts);
-};
+const Contact = model('Contact', contactSchema);
 
-const getContactById = async contactId => {
-  const contacts = await listContacts();
-  const contact = contacts.find(item => item.id === contactId);
-
-  if (!contact) {
-    throw new Error('Not found');
-  }
-
-  return contact;
-};
-
-const addContact = async body => {
-  const contacts = await listContacts();
-  const newContact = body;
-
-  const newContactsList = JSON.stringify([...contacts, newContact], null, 2);
-
-  await fs.writeFile(contactsPath, newContactsList, 'utf8');
-  return newContact;
-};
-
-const removeContact = async contactId => {
-  const contacts = await listContacts();
-  const index = contacts.findIndex(item => item.id === contactId);
-
-  if (index === -1) {
-    throw new Error('Not found');
-  }
-
-  const removedContact = contacts.splice(index, 1);
-  const contactsStr = JSON.stringify(contacts, null, 2);
-
-  await fs.writeFile(contactsPath, contactsStr, 'utf8');
-  return removedContact;
-};
-
-const updateContact = async (contactId, body) => {
-  const contacts = await listContacts();
-  const index = contacts.findIndex(item => item.id === contactId);
-
-  if (index === -1) {
-    throw new Error('Not found');
-  }
-
-  const updatedContact = { ...contacts[index], ...body };
-  contacts[index] = updatedContact;
-
-  const contactsStr = JSON.stringify(contacts, null, 2);
-
-  await fs.writeFile(contactsPath, contactsStr, 'utf8');
-  return updatedContact;
-};
-
-module.exports = {
-  listContacts,
-  getContactById,
-  addContact,
-  removeContact,
-  updateContact,
-};
+module.exports = Contact;

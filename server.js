@@ -1,10 +1,9 @@
 const app = require('./app');
+require('./config');
 const { connect } = require('mongoose');
 const { mongoURI, port } = require('./config');
 
-connect(mongoURI, {
-  useNewUrlParser: true,
-})
+connect(mongoURI)
   .then(() => {
     app.listen(port, () => {
       console.log('Database connection successful');
