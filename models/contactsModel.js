@@ -8,9 +8,12 @@ const contactSchema = new Schema(
     },
     email: {
       type: String,
+      unique: true,
     },
     phone: {
       type: String,
+      required: [true, 'Set phone for contact'],
+      unique: true,
     },
     favorite: {
       type: Boolean,
@@ -20,6 +23,6 @@ const contactSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-const Contact = model('Contact', contactSchema);
+const Contacts = model('contacts', contactSchema);
 
-module.exports = Contact;
+module.exports = Contacts;
