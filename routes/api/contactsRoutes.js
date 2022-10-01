@@ -6,7 +6,9 @@ const validation = require('../../middlewares/validation');
 const authentication = require('../../middlewares/authentication');
 const { schema, schemaUpd } = require('../../schemas/contactsValidationSchema');
 
-router.get('/', authentication, controller.getContactsCtrl);
+router.use(authentication);
+
+router.get('/', controller.getContactsCtrl);
 router.get('/:contactId', controller.getContactByIdCtrl);
 router.post('/', validation(schema), controller.addContactCtrl);
 router.delete('/:contactId', controller.removeContactCtrl);
