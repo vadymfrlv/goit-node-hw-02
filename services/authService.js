@@ -10,7 +10,7 @@ const setUserLoginToken = async (userId, token) => {
   return result;
 };
 
-const registartion = async (email, password) => {
+const registartion = async ({ email, password }) => {
   const user = new User({ email, password });
   await user.save();
   return user;
