@@ -1,14 +1,18 @@
 const User = require('../models/userModel');
 
-const signUp = async (email, password) => {
-  const user = new User({ email, password });
-
-  await user.save();
+const userCheck = async email => {
+  const user = await User.findOne({ email });
   return user;
 };
 
-const login = async email => {
-  const user = await User.findOne({ email });
+const setUserLoginToken = async (userId, token) => {
+  const result = await User.findByIdAndUpdate(userId, { token: token }, { new: true });
+  return result;
+};
+
+const registartion = async (email, password) => {
+  const user = new User({ email, password });
+  await user.save();
   return user;
 };
 
@@ -27,4 +31,11 @@ const updateSubscription = async (userId, subscription) => {
   return result;
 };
 
-module.exports = { signUp, login, getUserById, logout, updateSubscription };
+module.exports = {
+  userCheck,
+  setUserLoginToken,
+  registartion,
+  getUserById,
+  logout,
+  updateSubscription,
+};
