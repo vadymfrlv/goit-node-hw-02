@@ -16,17 +16,17 @@ const registartion = async (email, password) => {
   return user;
 };
 
-const getUserById = async userId => {
-  const user = await User.findById(userId);
-  return user;
-};
-
 const logout = async userId => {
   const user = await User.findByIdAndUpdate(userId, { token: '' });
   return user;
 };
 
-const updateSubscription = async (userId, subscription) => {
+const getUserById = async userId => {
+  const user = await User.findById(userId);
+  return user;
+};
+
+const subscription = async (userId, subscription) => {
   const result = await User.findByIdAndUpdate(userId, { subscription }, { new: true });
   return result;
 };
@@ -35,7 +35,7 @@ module.exports = {
   userCheck,
   setUserLoginToken,
   registartion,
-  getUserById,
   logout,
-  updateSubscription,
+  getUserById,
+  subscription,
 };

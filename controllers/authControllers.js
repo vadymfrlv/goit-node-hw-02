@@ -8,6 +8,7 @@ const signUpCtrl = async (req, res, next) => {
 
   try {
     const userCheck = await Service.userCheck(email);
+
     if (userCheck) {
       res.status(409).json({ message: 'Email in use' });
       return;
@@ -66,4 +67,40 @@ const logoutCtrl = async (req, res, next) => {
   }
 };
 
-module.exports = { signUpCtrl, loginCtrl, logoutCtrl };
+const currentCtrl = async (req, res, next) => {
+  const { userId } = req.user;
+
+  try {
+    const user = await Service.getUserById(userId);
+    if (!user) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
+
+    res.status(200).json({
+      email: user.email,
+      subscription: user.subscription,
+    });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const subscriptionCtrl = async (req, res, next) => {
+  const { userId } = req.user;
+
+  try {
+    const result = await Service.subscription(userId, req.body);
+
+    if (!result) {
+      res.status(401).json({ message: 'Unauthorized' });
+      return;
+    }
+
+    res.status(200).json({ email: result.email, subscription: result.subscription });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = { signUpCtrl, loginCtrl, logoutCtrl, currentCtrl, subscriptionCtrl };
