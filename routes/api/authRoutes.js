@@ -3,12 +3,12 @@ const router = express.Router();
 
 const controller = require('../../controllers/userControllers');
 const validation = require('../../middlewares/validation');
-const { schema, schemaUpd } = require('../../schemas/userValidationSchema');
+const { schema, schemaSubscription } = require('../../schemas/userValidationSchema');
 
-router.post('/signup');
-router.post('/login');
+router.post('/signup', validation(schema));
+router.post('/login', validation(schema));
 router.get('/current');
-router.patch('/');
 router.get('/logout');
+router.patch('/', validation(schemaSubscription));
 
 module.exports = router;
