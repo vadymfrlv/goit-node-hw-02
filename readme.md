@@ -58,7 +58,7 @@ MongoDB за допомогою [Mongoose](https://mongoosejs.com/).
     }
 ```
 
-REST API підтримує такі раути для `contacts`:
+# REST API підтримує такі раути для `contacts`:
 
 ### @ GET /api/contacts
 
@@ -114,7 +114,7 @@ REST API підтримує такі раути для `contacts`:
 
 Маршрути що приймають дані (`POST`, ` PUT` та `PATCH `) мають валідацію отриманих даних.
 
-REST API підтримує такі раути для `users`:
+# REST API підтримує такі раути для `users`:
 
 ### Реєстрація @ POST /api/users/register
 
