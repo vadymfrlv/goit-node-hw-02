@@ -1,17 +1,17 @@
 const Contacts = require('../models/contactsModel');
 
-const getContacts = async (owner, limit, skip, favorite) => {
+const getContacts = async ({ owner, limit, skip, favorite }) => {
   return Contacts.find(favorite ? { owner, favorite } : { owner }, '-createdAt -updatedAt')
     .limit(limit)
     .skip(skip)
     .populate('owner', 'email subscription -_id');
 };
 
-const getContactById = async (contactId, owner) => {
-  return Contacts.findById(contactId, owner);
+const getContactById = async ({ contactId, owner }) => {
+  return Contacts.findById({ contactId, owner });
 };
 
-const addContact = async (body, owner) => {
+const addContact = async ({ body, owner }) => {
   return Contacts.create({ ...body, owner });
 };
 

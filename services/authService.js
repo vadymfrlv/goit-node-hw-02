@@ -5,29 +5,29 @@ const userCheck = async email => {
   return user;
 };
 
-const setUserLoginToken = async (userId, token) => {
+const setUserLoginToken = async ({ userId, token }) => {
   const result = await User.findByIdAndUpdate(userId, { token: token }, { new: true });
   return result;
 };
 
-const registartion = async ({ email, password }) => {
-  const user = new User({ email, password });
+const registartion = async ({ name, email, password }) => {
+  const user = new User({ name, email, password });
   await user.save();
   return user;
 };
 
-const logout = async userId => {
-  const user = await User.findByIdAndUpdate(userId, { token: '' });
+const logout = async ({ userId }) => {
+  const user = await User.findByIdAndUpdate(userId);
   return user;
 };
 
-const getUserById = async userId => {
+const getUserById = async ({ userId }) => {
   const user = await User.findById(userId);
   return user;
 };
 
-const subscription = async (userId, subscription) => {
-  const result = await User.findByIdAndUpdate(userId, { subscription }, { new: true });
+const subscriptionUpd = async ({ userId, subscription }) => {
+  const result = await User.findByIdAndUpdate(userId, subscription, { new: true });
   return result;
 };
 
@@ -37,5 +37,5 @@ module.exports = {
   registartion,
   logout,
   getUserById,
-  subscription,
+  subscriptionUpd,
 };

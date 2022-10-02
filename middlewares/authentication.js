@@ -1,32 +1,32 @@
 const jwt = require('jsonwebtoken');
 const { jwtSecret } = require('../config');
-const User = require('../models/userModel');
+const { getUserById } = require('../services/authService');
 const { createError } = require('../helpers');
 
 const authenticate = async (req, res, next) => {
   const { authorization = '' } = req.headers;
   const [bearer, token] = authorization.split(' ');
 
+  if (bearer !== 'Bearer' || token === '') {
+    throw createError(401, 'Unauthorized');
+  }
+
   try {
-    if (bearer !== 'Bearer' || token === '') {
-      throw createError(401, 'Unauthorized');
-    }
-    const { id } = jwt.verify(token, jwtSecret);
-    const user = await User.findById(id);
+    const { userId } = jwt.verify(token, jwtSecret);
+    const user = await getUserById({ userId });
 
     if (!user) {
       throw createError(404, 'User not found');
     }
 
     if (!user.token) {
-      throw createError(401, 'Not authorized');
+      throw createError(401, 'Unauthorized');
     }
-    // req.user = { id: user._id, email: user.email, subscription: user.subscription };
-    req.user = user;
+
+    req.user = { userId: user._id, email: user.email, subscription: user.subscription };
     next();
   } catch (error) {
-    const authError = createError(error.status || 401, error.message || 'Unauthorized');
-    next(authError);
+    res.status(400).json({ message: error.message });
   }
 };
 

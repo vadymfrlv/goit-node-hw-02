@@ -4,7 +4,7 @@ const Service = require('../services/authService');
 const { jwtSecret } = require('../config');
 
 const signUpCtrl = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     const userCheck = await Service.userCheck(email);
@@ -14,11 +14,12 @@ const signUpCtrl = async (req, res, next) => {
       return;
     }
 
-    const result = await Service.registartion({ email, password });
+    const user = await Service.registartion({ name, email, password });
 
     res.status(201).json({
       user: {
-        email: result.email,
+        name: user.name,
+        email: user.email,
         subscription: 'starter',
       },
     });
@@ -32,9 +33,13 @@ const loginCtrl = async (req, res, next) => {
 
   try {
     const user = await Service.userCheck(email);
-    const passwordCheck = await bcrypt.compare(password, user.password);
+    if (!user) {
+      res.status(401).json({ message: 'Email or password is wrong' });
+      return;
+    }
 
-    if (!user || !passwordCheck) {
+    const passwordCheck = await bcrypt.compare(password, user.password);
+    if (!passwordCheck) {
       res.status(401).json({ message: 'Email or password is wrong' });
       return;
     }
@@ -42,7 +47,7 @@ const loginCtrl = async (req, res, next) => {
     const payload = { userId: user._id, subscription: user.subscription };
     const token = jwt.sign(payload, jwtSecret, { expiresIn: '9h' });
 
-    const result = await Service.updateUserToken({ userId: user._id, token });
+    const result = await Service.setUserLoginToken({ userId: user._id, token });
 
     res.status(200).json({
       token: result.token,
@@ -60,7 +65,7 @@ const logoutCtrl = async (req, res, next) => {
   const { userId } = req.user;
 
   try {
-    await Service.setUserLoginToken(userId);
+    await Service.setUserLoginToken({ userId, token: '' });
     res.status(204).json();
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -71,13 +76,10 @@ const currentCtrl = async (req, res, next) => {
   const { userId } = req.user;
 
   try {
-    const user = await Service.getUserById(userId);
-    if (!user) {
-      res.status(401).json({ message: 'Unauthorized' });
-      return;
-    }
+    const user = await Service.getUserById({ userId });
 
     res.status(200).json({
+      name: user.name,
       email: user.email,
       subscription: user.subscription,
     });
@@ -88,16 +90,19 @@ const currentCtrl = async (req, res, next) => {
 
 const subscriptionCtrl = async (req, res, next) => {
   const { userId } = req.user;
+  const { subscription } = req.body;
 
   try {
-    const result = await Service.subscription(userId, req.body);
+    const result = await Service.subscriptionUpd({ userId, subscription });
 
     if (!result) {
       res.status(401).json({ message: 'Unauthorized' });
       return;
     }
 
-    res.status(200).json({ email: result.email, subscription: result.subscription });
+    res
+      .status(200)
+      .json({ name: result.name, email: result.email, subscription: result.subscription });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }

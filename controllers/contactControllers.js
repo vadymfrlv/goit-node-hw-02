@@ -7,7 +7,7 @@ const getContactsCtrl = async (req, res, next) => {
 
   try {
     const contacts = await Service.getContacts({ owner: userId, limit, skip, favorite });
-    res.status(200).json({ data: contacts, amount: contacts.length, page, limit });
+    res.status(200).json({ contacts: contacts, total: contacts.length, page, limit });
   } catch (error) {
     next(error);
   }
@@ -33,11 +33,12 @@ const addContactCtrl = async (req, res, next) => {
   const { userId } = req.user;
   const body = req.body;
 
+  if (Object.keys(body).length === 0) {
+    res.status(400).json({ message: 'Missing required name field' });
+    return;
+  }
+
   try {
-    if (Object.keys(body).length === 0) {
-      res.status(400).json({ message: 'Missing required name field' });
-      return;
-    }
     const newContact = await Service.addContact({ ...body, owner: userId });
     res.status(201).json(newContact);
   } catch (error) {
