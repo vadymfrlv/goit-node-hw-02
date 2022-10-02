@@ -2,11 +2,13 @@ const Service = require('../services/contactsService');
 
 const getContactsCtrl = async (req, res, next) => {
   const { userId } = req.user;
-  const { page, limit, favorite } = req.query;
-  const skip = parseInt(page) > 1 ? (page - 1) * limit : 0;
+  const { page = 1, limit = 10, favorite } = req.query;
+  const skip = (page - 1) * limit;
 
   try {
-    const contacts = await Service.getContacts({ owner: userId, limit, skip, favorite });
+    const contacts = favorite
+      ? await Service.filterFavoriteContacts({ owner: userId, favorite })
+      : await Service.getContacts({ owner: userId, limit, skip, favorite });
     res.status(200).json({ contacts: contacts, total: contacts.length, page, limit });
   } catch (error) {
     next(error);
@@ -14,43 +16,45 @@ const getContactsCtrl = async (req, res, next) => {
 };
 
 const getContactByIdCtrl = async (req, res, next) => {
-  const { userId } = req.user;
+  const { contactId } = req.params;
+  const { userId: owner } = req.user;
 
   try {
-    const contact = await Service.getContactById({ contactId: req.params.id, owner: userId });
+    const contact = await Service.getContactById(contactId, owner);
 
     if (!contact) {
       throw new Error('Sorry, no contacts added yet');
     }
 
-    res.status(200).json(contact);
+    res.status(200).json({ contact });
   } catch (error) {
     res.status(404).json({ message: 'Not found' });
   }
 };
 
 const addContactCtrl = async (req, res, next) => {
-  const { userId } = req.user;
-  const body = req.body;
+  const { name, email, phone, favorite } = req.body;
+  const { userId: owner } = req.user;
 
-  if (Object.keys(body).length === 0) {
+  if (Object.keys(req.body).length === 0) {
     res.status(400).json({ message: 'Missing required name field' });
     return;
   }
 
   try {
-    const newContact = await Service.addContact({ ...body, owner: userId });
-    res.status(201).json(newContact);
+    const newContact = await Service.addContact({ name, email, phone, favorite }, owner);
+    res.status(201).json({ newContact });
   } catch (error) {
     next(error);
   }
 };
 
 const removeContactCtrl = async (req, res, next) => {
-  const { userId } = req.user;
+  const { contactId } = req.params;
+  const { userId: owner } = req.user;
 
   try {
-    const contact = await Service.removeContact({ contactId: req.params.id, owner: userId });
+    const contact = await Service.removeContact(contactId, owner);
 
     if (!contact) {
       throw new Error('Not found');
@@ -63,8 +67,8 @@ const removeContactCtrl = async (req, res, next) => {
 };
 
 const updateContactCtrl = async (req, res, next) => {
-  const owner = req.user.id;
-  const id = req.params.contactId;
+  const { contactId } = req.params;
+  const { userId: owner } = req.user;
   const body = req.body;
 
   try {
@@ -73,16 +77,16 @@ const updateContactCtrl = async (req, res, next) => {
       return;
     }
 
-    const putContact = await Service.updateContact(id, body, owner);
-    res.status(200).json(putContact);
+    const putContact = await Service.updateContact(contactId, body, owner);
+    res.status(200).json({ putContact });
   } catch (error) {
     res.status(404).json({ message: error.message });
   }
 };
 
 const favoriteContactCtrl = async (req, res, next) => {
-  const owner = req.user.id;
-  const id = req.params.contactId;
+  const { contactId } = req.params;
+  const { userId: owner } = req.user;
   const body = req.body;
 
   try {
@@ -91,8 +95,8 @@ const favoriteContactCtrl = async (req, res, next) => {
       return;
     }
 
-    const updContact = await Service.updateStatusContact(id, body, owner);
-    res.status(200).json(updContact);
+    const updContact = await Service.updateStatusContact(contactId, body, owner);
+    res.status(200).json({ updContact });
   } catch (error) {
     res.status(404).json({ message: 'Not found' });
   }
