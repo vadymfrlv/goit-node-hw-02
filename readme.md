@@ -26,7 +26,37 @@ MongoDB за допомогою [Mongoose](https://mongoosejs.com/).
   }
 ```
 
-REST API підтримує такі раути:
+Схема моделі колекції `users`.
+
+````js
+{
+  password: {
+    type: String,
+    required: [true, 'Set password for user'],
+  },
+  email: {
+    type: String,
+    required: [true, 'Email is required'],
+    unique: true,
+  },
+  subscription: {
+    type: String,
+    enum: ["starter", "pro", "business"],
+    default: "starter"
+  },
+  token: String
+}
+
+Схема контактів зроблена так що кожен користувач бачив тільки свої контакти. Для цього в схемі контактів додана властивість
+
+```js
+    owner: {
+      type: Schema.Types.ObjectId,
+      ref: 'user',
+    }
+```
+
+REST API підтримує такі раути для `contacts`:
 
 ### @ GET /api/contacts
 
@@ -82,6 +112,15 @@ REST API підтримує такі раути:
 
 Маршрути що приймають дані (`POST`, ` PUT` та `PATCH `) мають валідацію отриманих даних.
 
+REST API підтримує такі раути для `users`:
+
+### Реєстрація @ POST /api/users/register
+
+- Зроблена валідація всіх обов'язкових полів (email і password). При помилці валідації повертае помилку валідації.
+- У разі успішної валідації в моделі `User` створює користувача за даними, які пройшли валідацію. Для засолювання паролів використанний [bcryptjs](https://www.npmjs.com/package/bcryptjs)
+- Якщо пошта вже використовується кимось іншим, повертає помилку Conflict.
+- В іншому випадку повертає успішну відповідь.
+
 ### Команди:
 
 - `npm start` &mdash; старт сервера в режимі production
@@ -89,3 +128,4 @@ REST API підтримує такі раути:
 - `npm run lint` &mdash; запустити виконання перевірки коду з eslint, необхідно виконувати перед
   кожним PR та виправляти всі помилки лінтера
 - `npm lint:fix` &mdash; та ж перевірка лінтера, але з автоматичними виправленнями простих помилок
+````
