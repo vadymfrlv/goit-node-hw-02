@@ -2,8 +2,11 @@ const express = require('express');
 const router = express.Router();
 
 const controller = require('../../controllers/contactControllers');
-const validation = require('../../middlewares/contactsValidation');
+const validation = require('../../middlewares/validation');
+const authentication = require('../../middlewares/authentication');
 const { schema, schemaUpd } = require('../../schemas/contactsValidationSchema');
+
+router.use(authentication);
 
 router.get('/', controller.getContactsCtrl);
 router.get('/:contactId', controller.getContactByIdCtrl);
