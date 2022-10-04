@@ -20,7 +20,7 @@ const updateAvatarCtrl = async (req, res, next) => {
 
     await fs.rename(tempPath, uploadPath);
     const avatarURL = path.join(`/avatars/${newName}`);
-    await Service.updateAvatar(userId, avatarURL);
+    await Service.updateAvatar({ userId, avatarURL });
     res.json({ avatarURL });
   } catch (error) {
     await fs.unlink(req.file.path);
