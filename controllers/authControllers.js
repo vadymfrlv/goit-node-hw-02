@@ -15,7 +15,7 @@ const signUpCtrl = async (req, res, next) => {
       return;
     }
 
-    const avatarURL = gravatar.url(email);
+    const avatarURL = gravatar.url(email, { s: '200', d: 'mp' }, false);
     const user = await Service.registartion({ name, email, password, avatarURL });
 
     res.status(201).json({

@@ -5,4 +5,4 @@ const updateAvatar = async ({ userId, avatarURL }) => {
   return result;
 };
 
-module.exports = updateAvatar;
+module.exports = { updateAvatar };

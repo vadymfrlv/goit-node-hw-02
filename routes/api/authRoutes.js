@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+const { authentication, validation, upload } = require('../../middlewares');
 const controller = require('../../controllers/authControllers');
-const avatarController = require('../../controllers/avatarController');
-const { validation, authentication, upload } = require('../../middlewares');
+const avatarController = require('../../controllers/avatarControllers');
 const {
   schemaSignUp,
   schemaLogin,

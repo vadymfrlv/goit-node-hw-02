@@ -1,9 +1,9 @@
 const fs = require('fs').promises;
 const path = require('path');
 const Jimp = require('jimp');
-const updateAvatar = require('../services/avatarService');
+const Service = require('../services/avatarsService');
 
-const avatarDir = path.join(__dirname, '../../', 'public/avatars');
+const avatarDir = path.resolve('./public/avatars');
 
 const updateAvatarCtrl = async (req, res, next) => {
   const { userId } = req.user;
@@ -15,12 +15,12 @@ const updateAvatarCtrl = async (req, res, next) => {
   try {
     Jimp.read(tempPath, (error, img) => {
       if (error) throw error;
-      img.resize(250, 250).write(uploadPath);
+      img.cover(250, 250).write(uploadPath);
     });
 
     await fs.rename(tempPath, uploadPath);
-    const avatarURL = path.join('avatars', newName);
-    await updateAvatar(userId, avatarURL);
+    const avatarURL = path.join(`/avatars/${newName}`);
+    await Service.updateAvatar(userId, avatarURL);
     res.json({ avatarURL });
   } catch (error) {
     await fs.unlink(req.file.path);
