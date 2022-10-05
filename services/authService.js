@@ -10,8 +10,8 @@ const setUserLoginToken = async ({ userId, token }) => {
   return result;
 };
 
-const registartion = async ({ name, email, password }) => {
-  const user = new User({ name, email, password });
+const registartion = async ({ name, email, password, avatarURL }) => {
+  const user = new User({ name, email, password, avatarURL });
   await user.save();
   return user;
 };

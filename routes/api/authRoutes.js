@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 
+const { authentication, validation, upload } = require('../../middlewares');
 const controller = require('../../controllers/authControllers');
-const validation = require('../../middlewares/validation');
-const authentication = require('../../middlewares/authentication');
+const avatarController = require('../../controllers/avatarControllers');
 const {
   schemaSignUp,
   schemaLogin,
@@ -15,5 +15,6 @@ router.post('/login', validation(schemaLogin), controller.loginCtrl);
 router.get('/current', authentication, controller.currentCtrl);
 router.patch('/logout', authentication, controller.logoutCtrl);
 router.patch('/', authentication, validation(schemaSubscription), controller.subscriptionCtrl);
+router.patch('/avatars', authentication, upload.single('avatars'), avatarController);
 
 module.exports = router;

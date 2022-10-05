@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const gravatar = require('gravatar');
 const Service = require('../services/authService');
 const { jwtSecret } = require('../config');
 
@@ -14,7 +15,8 @@ const signUpCtrl = async (req, res, next) => {
       return;
     }
 
-    const user = await Service.registartion({ name, email, password });
+    const avatarURL = gravatar.url(email, { s: '200', d: 'mp' }, false);
+    const user = await Service.registartion({ name, email, password, avatarURL });
 
     res.status(201).json({
       user: {
