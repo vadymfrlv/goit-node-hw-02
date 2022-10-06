@@ -1,5 +1,5 @@
 Створений аккаунт на [MongoDB Atlas](https://www.mongodb.com/cloud/atlas). Через Compass створена
-база даних `db-contacts` і в ній колекція з `contacts` та `users`. Написаний код для створення
+база даних `db-app` і в ній колекція з `contacts` та `users`. Написаний код для створення
 підключення до MongoDB за допомогою [Mongoose](https://mongoosejs.com/).
 
 Схема моделі колекції `contacts`:
