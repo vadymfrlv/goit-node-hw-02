@@ -1,7 +1,9 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const gravatar = require('gravatar');
+const short = require('shortid');
 const Service = require('../services/authService');
+const { sendEmail, emailTemplate } = require('../helpers');
 const { jwtSecret } = require('../config');
 
 const signUpCtrl = async (req, res, next) => {
@@ -11,18 +13,29 @@ const signUpCtrl = async (req, res, next) => {
     const userCheck = await Service.userCheck(email);
 
     if (userCheck) {
-      res.status(409).json({ message: 'Email in use' });
+      res.status(409).json({ message: `Email "${email}" already used` });
       return;
     }
 
+    const verificationToken = short();
     const avatarURL = gravatar.url(email, { s: '200', d: 'mp' }, false);
-    const user = await Service.registartion({ name, email, password, avatarURL });
+    const user = await Service.registartion({
+      name,
+      email,
+      password,
+      avatarURL,
+      verificationToken,
+    });
+
+    const mail = emailTemplate(email, verificationToken);
+    await sendEmail(mail);
 
     res.status(201).json({
       user: {
         name: user.name,
         email: user.email,
         subscription: 'starter',
+        verificationToken: user.verificationToken,
       },
     });
   } catch (error) {
@@ -37,6 +50,11 @@ const loginCtrl = async (req, res, next) => {
     const user = await Service.userCheck(email);
     if (!user) {
       res.status(401).json({ message: 'Email or password is wrong' });
+      return;
+    }
+
+    if (!user.verify) {
+      res.status(401).json({ message: 'Email not verified' });
       return;
     }
 
@@ -110,4 +128,50 @@ const subscriptionCtrl = async (req, res, next) => {
   }
 };
 
-module.exports = { signUpCtrl, loginCtrl, logoutCtrl, currentCtrl, subscriptionCtrl };
+const emailVerify = async (req, res, next) => {
+  const { verificationToken } = req.params;
+
+  try {
+    const user = await Service.checkVerifyToken({ verificationToken });
+
+    if (!user) {
+      res.status(404).json({ message: 'User not found' });
+      return;
+    }
+
+    await Service.emailVerification(user._id, { verify: true, verificationToken: '' });
+    res.status(200).json({ message: 'Verification successful' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+const emailVerifyRepeat = async (req, res, next) => {
+  const { email } = req.body;
+
+  try {
+    const userCheck = await Service.userCheck(email);
+    const { verify, verificationToken } = userCheck;
+
+    if (verify) {
+      res.status(400).json({ message: 'Verification has already been passed' });
+      return;
+    }
+
+    const mail = emailTemplate(email, verificationToken);
+    await sendEmail(mail);
+    res.status(200).json({ message: 'Verification email sent' });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+module.exports = {
+  signUpCtrl,
+  loginCtrl,
+  logoutCtrl,
+  currentCtrl,
+  subscriptionCtrl,
+  emailVerify,
+  emailVerifyRepeat,
+};

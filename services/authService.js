@@ -10,8 +10,8 @@ const setUserLoginToken = async ({ userId, token }) => {
   return result;
 };
 
-const registartion = async ({ name, email, password, avatarURL }) => {
-  const user = new User({ name, email, password, avatarURL });
+const registartion = async ({ name, email, password, avatarURL, verificationToken }) => {
+  const user = new User({ name, email, password, avatarURL, verificationToken });
   await user.save();
   return user;
 };
@@ -31,6 +31,16 @@ const subscriptionUpd = async ({ userId, subscription }) => {
   return result;
 };
 
+const checkVerifyToken = async ({ verificationToken }) => {
+  const result = await User.findOne({ verificationToken });
+  return result;
+};
+
+const emailVerification = async (userId, verificationToken) => {
+  const result = await User.findByIdAndUpdate(userId, verificationToken);
+  return result;
+};
+
 module.exports = {
   userCheck,
   setUserLoginToken,
@@ -38,4 +48,6 @@ module.exports = {
   logout,
   getUserById,
   subscriptionUpd,
+  checkVerifyToken,
+  emailVerification,
 };
