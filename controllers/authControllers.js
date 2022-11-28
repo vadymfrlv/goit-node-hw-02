@@ -2,6 +2,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const gravatar = require('gravatar');
 const short = require('shortid');
+
 const Service = require('../services/authService');
 const { sendEmail, emailTemplate } = require('../helpers');
 const { jwtSecret } = require('../config');

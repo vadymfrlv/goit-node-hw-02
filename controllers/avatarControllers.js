@@ -1,8 +1,8 @@
 const fs = require('fs').promises;
 const path = require('path');
 const Jimp = require('jimp');
-const Service = require('../services/avatarsService');
 
+const Service = require('../services/avatarsService');
 const avatarDir = path.resolve('./public/avatars');
 
 const updateAvatarCtrl = async (req, res, next) => {
